@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Duha: Garden of Serenity</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #e0d7cb, #b8d1ca);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Georgia', serif;
+        }
+        canvas {
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        #message {
+            position: absolute;
+            top: 30px;
+            text-align: center;
+            color: #3a405a;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        #quote {
+            position: absolute;
+            bottom: 40px;
+            text-align: center;
+            color: #1f2a44;
+            font-size: 20px;
+            max-width: 70%;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 2px solid #a8b5a2;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="message">For Duha: May Your Soul Bloom with Peace</div>
+    <div id="quote"></div>
+    <script>
+        let flowers = [];
+        let leaves = [];
+        let quotes = [
+            { text: "Indeed, with hardship [will be] ease. (Quran 94:6)", source: "Quran 94:6" },
+            { text: "And whoever puts their trust in Allah, then He ˹alone˺ is sufficient for them. (Quran 65:3)", source: "Quran 65:3" },
+            { text: "So verily, with the hardship, there is relief. (Quran 94:5)", source: "Quran 94:5" },
+            { text: "Indeed, Allah is with the patient. (Quran 2:153)", source: "Quran 2:153" },
+            { text: "And He is with you wherever you are. (Quran 57:4)", source: "Quran 57:4" },
+            { text: "Indeed, the mercy of Allah is near to the doers of good. (Quran 7:56)", source: "Quran 7:56" },
+            { text: "And seek help through patience and prayer. (Quran 2:45)", source: "Quran 2:45" },
+            { text: "Indeed, the promise of Allah is truth. (Quran 30:60)", source: "Quran 30:60" },
+            { text: "And Allah is with those who are patient. (Quran 8:46)", source: "Quran 8:46" },
+            { text: "And rely upon Allah; and sufficient is Allah as Disposer of affairs. (Quran 33:3)", source: "Quran 33:3" },
+            { text: "Indeed, those who have believed and done righteous deeds – the Most Merciful will appoint for them affection. (Quran 19:96)", source: "Quran 19:96" },
+            { text: "And whoever fears Allah – He will make for him a way out. (Quran 65:2)", source: "Quran 65:2" },
+            { text: "Allah is Gentle and loves gentleness in all matters. (Sahih al-Bukhari)", source: "Sahih al-Bukhari" },
+            { text: "The heart is polished by the remembrance of Allah. (Tirmidhi)", source: "Tirmidhi" },
+            { text: "The most beloved deeds to Allah are those done consistently, even if they are small. (Sahih al-Bukhari)", source: "Sahih al-Bukhari" },
+            { text: "Whoever relieves a believer’s distress, Allah will relieve his distress on the Day of Resurrection. (Sahih Muslim)", source: "Sahih Muslim" },
+            { text: "The best of you are those who are patient in adversity. (Tirmidhi)", source: "Tirmidhi" },
+            { text: "And He found you lost and guided [you]. (Quran 93:7)", source: "Quran 93:7" },
+            { text: "Indeed, Allah is ever Accepting of repentance and Merciful. (Quran 4:16)", source: "Quran 4:16" },
+            { text: "And Allah is the best of planners. (Quran 3:54)", source: "Quran 3:54" }
+        ];
+
+        function setup() {
+            createCanvas(windowWidth * 0.85, windowHeight * 0.85);
+            textAlign(CENTER);
+            let message = select('#message');
+            message.style('opacity', '1');
+        }
+
+        function draw() {
+            background(224, 215, 203, 30);
+            for (let leaf of leaves) {
+                leaf.update();
+                leaf.display();
+            }
+            for (let flower of flowers) {
+                flower.update();
+                flower.display();
+            }
+        }
+
+        function mousePressed() {
+            if (flowers.length >= 1) {
+                flowers.shift();
+                leaves.shift();
+            }
+            flowers.push(new Flower(mouseX, mouseY));
+            leaves.push(new Leaf(mouseX, mouseY));
+            let quoteDiv = select('#quote');
+            let quote = random(quotes);
+            quoteDiv.html(`"${quote.text}"<br><small>- ${quote.source}</small>`);
+            quoteDiv.style('opacity', '1');
+        }
+
+        class Flower {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.petals = floor(random(6, 12));
+                this.size = 0;
+                this.maxSize = random(70, 130);
+                this.growthRate = random(0.8, 2);
+                this.baseColor = color(random(180, 240), random(100, 180), random(140, 220), 220);
+                this.innerColor = color(random(200, 255), random(150, 200), random(160, 240), 180);
+                this.angle = 0;
+                this.glow = 0;
+            }
+
+            update() {
+                if (this.size < this.maxSize) {
+                    this.size += this.growthRate;
+                }
+                this.angle += 0.008;
+                this.glow = sin(frameCount * 0.05) * 15;
+            }
+
+            display() {
+                push();
+                translate(this.x, this.y);
+                rotate(this.angle);
+                drawingContext.shadowBlur = 15 + this.glow;
+                drawingContext.shadowColor = 'rgba(255, 255, 255, 0.6)';
+                
+                // Outer petals
+                fill(this.baseColor);
+                noStroke();
+                for (let i = 0; i < this.petals; i++) {
+                    rotate(TWO_PI / this.petals);
+                    ellipse(0, this.size * 0.4, this.size * 0.5, this.size * 1.3);
+                }
+                
+                // Inner petals (slightly smaller, gradient effect)
+                fill(this.innerColor);
+                for (let i = 0; i < this.petals; i++) {
+                    rotate(TWO_PI / this.petals);
+                    ellipse(0, this.size * 0.25, this.size * 0.3, this.size * 0.8);
+                }
+                
+                // Center of the flower
+                fill(255, 215, 0, 200);
+                ellipse(0, 0, this.size * 0.2);
+                pop();
+            }
+        }
+
+        class Leaf {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = random(20, 40);
+                this.angle = random(TWO_PI);
+                this.speed = random(0.5, 1.5);
+                this.offset = random(100);
+            }
+
+            update() {
+                this.y += this.speed;
+                this.angle += 0.05;
+                if (this.y > height + this.size) {
+                    this.y = -this.size;
+                    this.x = random(width);
+                }
+            }
+
+            display() {
+                push();
+                translate(this.x, this.y);
+                rotate(this.angle + sin(frameCount * 0.02 + this.offset) * 0.2);
+                fill(90, 140, 90, 180);
+                noStroke();
+                ellipse(0, 0, this.size * 0.6, this.size);
+                pop();
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth * 0.85, windowHeight * 0.85);
+        }
+    </script>
+</body>
+</html>
